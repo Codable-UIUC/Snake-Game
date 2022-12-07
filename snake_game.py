@@ -15,6 +15,8 @@ pygame.display.set_caption('Snake Game')
 blue = (0, 0, 255)
 red = (255, 0, 0)
 black = (0, 0, 0)
+green = (0, 255, 0)
+white = (255, 255, 255)
 framerate = pygame.time.Clock()
 
 # main game loop
@@ -74,7 +76,7 @@ def main_game():
             pygame.draw.rect(dis, green, pygame.Rect(
             pos[0], pos[1], 10, 10))
          
-        pygame.draw.rect(game_window, white, pygame.Rect(
+        pygame.draw.rect(dis, white, pygame.Rect(
         apple_pos[0], apple_pos[1], 10, 10))
 
         # When game is over, there should messages asking 
