@@ -29,6 +29,8 @@ move_y = 0
 applex = round(random.randrange(0, d_width - snake_block) / 10.0) * 10.0
 appley = round(random.randrange(0, d_width - snake_block) / 10.0) * 10.0
 
+
+
 def main_game():
     while not game_over:
         for event in pygame.event.get():
@@ -47,6 +49,33 @@ def main_game():
                 elif event.key == pygame.K_DOWN:
                     move_y = snake_block
                     move_x = 0
+        
+        #body growing
+        snake_pos = [x,y]
+        snake_body = [[x-10, y],[x-20,y],[x-30,y],[x-40,y]]
+        apple_pos = [applex, appley]
+        apple_spawn = True
+
+        snake_body.insert(0, list(snake_pos))
+        if snake_pos[0] == apple_pos[0] and snake_pos[1] == apple_pos[1]:
+            score += 10
+            apple_spawn = False
+        else:
+            snake_body.pop()
+                
+        if not apple_spawn:
+            apple_pos = [random.randrange(1, (d_width - snake_block) / 10.0) * 10,
+                                random.randrange(1, (d_width - snake_block) / 10.0) * 10]
+                
+        apple_spawn = True
+        dis.fill(black)
+     
+        for pos in snake_body:
+            pygame.draw.rect(dis, green, pygame.Rect(
+            pos[0], pos[1], 10, 10))
+         
+        pygame.draw.rect(game_window, white, pygame.Rect(
+        apple_pos[0], apple_pos[1], 10, 10))
 
         # When game is over, there should messages asking 
         # if the user wants to close the game or restart
