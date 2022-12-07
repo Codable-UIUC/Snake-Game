@@ -32,11 +32,13 @@ class SnakeGame():
         self.move_x = 0
         self.move_y = 0
 
-        self.applex = round(random.randrange(0, self.d_width - self.snake_block) / 10.0) * 10.0
-        self.appley = round(random.randrange(0, self.d_width - self.snake_block) / 10.0) * 10.0
+        self.applex = round(random.randint(0, self.d_width - self.snake_block) / 10.0) * 10.0
+        self.appley = round(random.randint(0, self.d_height - self.snake_block) / 10.0) * 10.0
 
         self.font_style = pygame.font.SysFont("bahnschrift", 30)
-        self.score_font = pygame.font.SysFont("comicsansms", 20)
+        self.score_font = pygame.font.SysFont("ariel", 20)
+
+        self.snake_body = []
 
         self.max_score = max_score
         self.curr_score = 0
@@ -53,6 +55,10 @@ class SnakeGame():
 
     def set_higest_score(self, max_score, curr_score):
         self.max_score = max(max_score, curr_score)
+
+    def draw_snake(self):
+        for pos in self.snake_body:
+            pygame.draw.rect(self.dis, self.blue, pygame.Rect(pos[0], pos[1], self.snake_block, self.snake_block))
 
     def main_game(self):
         while not self.game_over:
@@ -87,52 +93,6 @@ class SnakeGame():
                     elif event.key == pygame.K_DOWN:
                         self.move_y = self.snake_block
                         self.move_x = 0
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.game_over = True
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
-                        self.move_x = -self.snake_block
-                        self.move_y = 0
-                    elif event.key == pygame.K_RIGHT:
-                        self.move_x = self.snake_block
-                        self.move_y = 0
-                    elif event.key == pygame.K_UP:
-                        self.move_y = -self.snake_block
-                        self.move_x = 0
-                    elif event.key == pygame.K_DOWN:
-                        self.move_y = self.snake_block
-                        self.move_x = 0
-            
-            if self.x >= self.d_width or self.x < 0 or self.y >= self.d_height or self.y < 0:
-                self.game_close = True
-
-            #body growing
-            self.snake_pos = [self.x,self.y]
-            self.snake_body = [[self.x-10, self.y],[self.x-20,self.y],[self.x-30,self.y],[self.x-40,self.y]]
-            self.apple_pos = [self.applex, self.appley]
-            self.apple_spawn = True
-
-            self.snake_body.insert(0, list(self.snake_pos))
-            if self.snake_pos[0] == self.apple_pos[0] and self.snake_pos[1] == self.apple_pos[1]:
-                score += 10
-                self.apple_spawn = False
-            else:
-                self.snake_body.pop()
-                    
-            if not self.apple_spawn:
-                self.apple_pos = [random.randrange(1, (self.d_width - self.snake_block) / 10.0) * 10,
-                                    random.randrange(1, (self.d_width - self.snake_block) / 10.0) * 10]
-                    
-            self.apple_spawn = True
-            self.dis.fill(self.black)
-        
-            for pos in self.snake_body:
-                pygame.draw.rect(self.dis, self.green, pygame.Rect(
-                pos[0], pos[1], 10, 10))
-            
-            pygame.draw.rect(self.dis, self.white, pygame.Rect(
-            self.apple_pos[0], self.apple_pos[1], 10, 10))
 
             # When game is over, there should messages asking 
             # if the user wants to close the game or restart
@@ -142,11 +102,19 @@ class SnakeGame():
 
             self.x += self.move_x
             self.y += self.move_y
-
             self.dis.fill(self.black)
-            
-            pygame.draw.rect(self.dis, (140, 60, 60), [self.applex, self.appley, self.snake_block, self.snake_block])
-            pygame.draw.rect(self.dis, (68, 78, 200), [self.x, self.y, self.snake_block, self.snake_block])
+            pygame.draw.rect(self.dis, self.red, [self.applex, self.appley, self.snake_block, self.snake_block])
+
+            self.snake_pos = [self.x,self.y]
+            self.snake_body.append(self.snake_pos)
+            if len(self.snake_body) > self.curr_score+1:
+                del self.snake_body[0]
+    
+            for x in self.snake_body[:-1]:
+                if x == self.snake_pos:
+                    self.game_close = True
+
+            self.draw_snake()
             self.display_score(self.curr_score,self.max_score)
             pygame.display.update()   
 
